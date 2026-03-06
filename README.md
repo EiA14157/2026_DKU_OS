@@ -28,13 +28,13 @@ Follow this file step by step to install and run Linux on a virtual machine. Ins
 Lab0 contains information about installing a virtual machine and Ubuntu. Set the environment according to the documentation. The documentation for lab0 is at the link below.
 
 ## Lab1
-Implement scheduling techniques for CPU virtualization and compare their performance. 
+This project explores CPU virtualization scheduling techniques by implementing them and comparing their performance.
 
 ## Lab2
-Implement concurrent data structure and compare their performance.
+This project explores concurrent data structures by implementing them and evaluating their performance.
  
 ## Lab3
-Not yet.
+This project introduces digital forensic analysis of the ext4 file system by tracing file metadata, inodes, extents, and data blocks.
 
 
 
