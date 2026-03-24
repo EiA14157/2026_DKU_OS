@@ -1,0 +1,25 @@
+# Compiler 변수 설정: g++ 사용
+CXX=g++  -I /opt/homebrew/include -L /opt/homebrew/lib -lgtest
+
+# 컴파일러 플래그 설정: -std=c++11은 C++11 표준 사용을 의미함
+CXXFLAGS=-std=c++14 -g -Wno-deprecated-declarations
+
+LDFLAGS=-lpthread -lcrypto -I /opt/homebrew/include -L /opt/homebrew/lib -lgtest
+
+# Source files
+SOURCES=test.cpp sched.cpp test_util.cpp
+OBJECTS=$(SOURCES:.cpp=.o)
+
+# Executable name
+EXECUTABLE=test
+
+all: $(SOURCES) $(EXECUTABLE)
+
+$(EXECUTABLE): $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(OBJECTS) -o $@ $(LDFLAGS)
+
+.cpp.o:
+	$(CXX) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+clean:
+	rm -f $(OBJECTS) $(EXECUTABLE)
