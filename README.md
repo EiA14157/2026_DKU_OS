@@ -44,7 +44,7 @@ The required scheduling algorithms include FIFO, SRT, RR, and MLFQ, with Lottery
 ## Lab2
 This project implements a concurrent Hash Table and evaluates its performance under different locking strategies.
 The Hash Table supports Insert, Lookup, Remove, and Traversal operations, and is implemented using three synchronization approaches: without lock, coarse-grained lock, and fine-grained lock.
-- [Lab1 Document](https://github.com/DKU-EmbeddedSystem-Lab/2026_DKU_OS/blob/main/2026_Lab%202.%20Data%20Concurrency.pdf)
+- [Lab2 Document](https://github.com/DKU-EmbeddedSystem-Lab/2026_DKU_OS/blob/main/2026_Lab%202.%20Data%20Concurrency.pdf)
 - Class 1
   - [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSdw8LWyc0cmNBUksXF-0NY-dExDHqi_srbZXpIoZuDGGFI_nA/viewform?usp=header)
   - Deadline: **2026.05.13 23:59**
