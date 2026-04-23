@@ -28,7 +28,8 @@ Follow this file step by step to install and run Linux on a virtual machine. Ins
 Lab0 contains information about installing a virtual machine and Ubuntu. Set the environment according to the documentation. The documentation for lab0 is at the link below.
 
 ## Lab1
-Implement scheduling techniques for CPU virtualization and compare their performance.
+Implement CPU scheduling techniques for virtualization and compare their performance.
+The required scheduling algorithms include FIFO, SRT, RR, and MLFQ, with Lottery and Stride scheduling implemented as bonus options.
 - [Lab1 Document](https://github.com/DKU-EmbeddedSystem-Lab/2026_DKU_OS/blob/main/2026_Lab%201.%20CPU%20Virtualization.pdf)
 - Class 1
   - [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSdvXwoDOcuvoy0CG9ZiunXwlRVO9idtH7a52ebatwmlLrBFHA/viewform)
@@ -41,7 +42,18 @@ Implement scheduling techniques for CPU virtualization and compare their perform
   - Deadline: **2026.04.15 23:59**
 
 ## Lab2
-This project explores concurrent data structures by implementing them and evaluating their performance.
+This project implements a concurrent Hash Table and evaluates its performance under different locking strategies.
+The Hash Table supports Insert, Lookup, Remove, and Traversal operations, and is implemented using three synchronization approaches: without lock, coarse-grained lock, and fine-grained lock.
+- [Lab1 Document](https://github.com/DKU-EmbeddedSystem-Lab/2026_DKU_OS/blob/main/2026_Lab%202.%20Data%20Concurrency.pdf)
+- Class 1
+  - [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSdw8LWyc0cmNBUksXF-0NY-dExDHqi_srbZXpIoZuDGGFI_nA/viewform?usp=header)
+  - Deadline: **2026.05.13 23:59**
+- Class 2
+  - [Google Form](https://docs.google.com/forms/d/e/1FAIpQLSeXGjIOapNwTa3mwGnwTdvNOYtlIIbWgsF-SuizxGTFE7wTCw/viewform?usp=header)
+  - Deadline: **2026.05.13 23:59**
+- Class 3
+  - [Google Form](https://docs.google.com/forms/d/e/1FAIpQLScPxDw6rQKl-lwNcjlOT2ftnuFA9xsQGrz_CPjsliFZ4h-S-g/viewform?usp=header)
+  - Deadline: **2026.05.13 23:59**
  
 ## Lab3
 This project introduces digital forensic analysis of the ext4 file system by tracing file metadata, inodes, extents, and data blocks.
