@@ -2,7 +2,7 @@
 CXX=g++
 
 # 컴파일러 플래그 설정: C++11 표준 사용
-CXXFLAGS=-std=c++11 -g
+CXXFLAGS=-std=c++14 -g
 
 LDFLAGS=-lpthread -lgtest
 
