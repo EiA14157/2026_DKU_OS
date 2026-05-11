@@ -12,6 +12,19 @@
 #include <vector>
 #include <algorithm>
 
+namespace {
+HTNode* find_node(HTNode* head, int key) {
+    HTNode* node = head;
+    while (node != nullptr) {
+        if (node->key == key) {
+            return node;
+        }
+        node = node->next;
+    }
+    return nullptr;
+}
+}
+
 // DefaultHashTable
 // DefaultHashTable 생성자
 DefaultHashTable::DefaultHashTable(int num_buckets) : num_buckets_(num_buckets) {
@@ -74,18 +87,54 @@ HashTable::~HashTable() {}
 
 void HashTable::insert(int key, int value) {
     // 구현
+    int bucket_idx = hash_func(key);
+    HTNode* node = find_node(buckets_[bucket_idx], key);
+
+    if (node != nullptr) {
+        node->value += value;
+        node->upd_cnt += 1;
+        return;
+    }
+
+    HTNode* new_node = new HTNode{key, value, 0, buckets_[bucket_idx]};
+    buckets_[bucket_idx] = new_node;
 }
 
 int HashTable::lookup(int key) {
     // 구현
+    int bucket_idx = hash_func(key);
+    HTNode* node = find_node(buckets_[bucket_idx], key);
+    if (node == nullptr) {
+        return 0;
+    }
+    return node->value;
 }
 
 void HashTable::remove(int key) {
     // 구현
+    int bucket_idx = hash_func(key);
+    HTNode* prev = nullptr;
+    HTNode* node = buckets_[bucket_idx];
+
+    while (node != nullptr) {
+        if (node->key == key) {
+            if (prev == nullptr) {
+                buckets_[bucket_idx] = node->next;
+            }
+            else {
+                prev->next = node->next;
+            }
+            delete node;
+            return;
+        }
+        prev = node;
+        node = node->next;
+    }
 }
 
 void HashTable::traversal(KVC* arr) {
     // 구현
+    DefaultHashTable::traversal(arr);
 }
 
 // CoarseHashTable (coarse-grained lock)
@@ -101,18 +150,66 @@ CoarseHashTable::~CoarseHashTable() {
 
 void CoarseHashTable::insert(int key, int value) {
     // 구현
+    pthread_mutex_lock(&mutex_lock);
+
+    int bucket_idx = hash_func(key);
+    HTNode* node = find_node(buckets_[bucket_idx], key);
+    if (node != nullptr) {
+        node->value += value;
+        node->upd_cnt += 1;
+        pthread_mutex_unlock(&mutex_lock);
+        return;
+    }
+
+    HTNode* new_node = new HTNode{key, value, 0, buckets_[bucket_idx]};
+    buckets_[bucket_idx] = new_node;
+
+    pthread_mutex_unlock(&mutex_lock);
 }
 
 int CoarseHashTable::lookup(int key) {
     // 구현
+    pthread_mutex_lock(&mutex_lock);
+
+    int bucket_idx = hash_func(key);
+    HTNode* node = find_node(buckets_[bucket_idx], key);
+    int value = (node == nullptr) ? 0 : node->value;
+
+    pthread_mutex_unlock(&mutex_lock);
+    return value;
 }
 
 void CoarseHashTable::remove(int key) {
     // 구현
+    pthread_mutex_lock(&mutex_lock);
+
+    int bucket_idx = hash_func(key);
+    HTNode* prev = nullptr;
+    HTNode* node = buckets_[bucket_idx];
+
+    while (node != nullptr) {
+        if (node->key == key) {
+            if (prev == nullptr) {
+                buckets_[bucket_idx] = node->next;
+            }
+            else {
+                prev->next = node->next;
+            }
+            delete node;
+            break;
+        }
+        prev = node;
+        node = node->next;
+    }
+
+    pthread_mutex_unlock(&mutex_lock);
 }
 
 void CoarseHashTable::traversal(KVC* arr) {
     // 구현
+    pthread_mutex_lock(&mutex_lock);
+    DefaultHashTable::traversal(arr);
+    pthread_mutex_unlock(&mutex_lock);
 }
 
 // FineHashTable (fine-grained lock)
@@ -135,16 +232,70 @@ FineHashTable::~FineHashTable() {
 
 void FineHashTable::insert(int key, int value) {
     // 구현
+    int bucket_idx = hash_func(key);
+    pthread_mutex_lock(&bucket_locks[bucket_idx]);
+
+    HTNode* node = find_node(buckets_[bucket_idx], key);
+    if (node != nullptr) {
+        node->value += value;
+        node->upd_cnt += 1;
+        pthread_mutex_unlock(&bucket_locks[bucket_idx]);
+        return;
+    }
+
+    HTNode* new_node = new HTNode{key, value, 0, buckets_[bucket_idx]};
+    buckets_[bucket_idx] = new_node;
+
+    pthread_mutex_unlock(&bucket_locks[bucket_idx]);
 }
 
 int FineHashTable::lookup(int key) {
     // 구현
+    int bucket_idx = hash_func(key);
+    pthread_mutex_lock(&bucket_locks[bucket_idx]);
+
+    HTNode* node = find_node(buckets_[bucket_idx], key);
+    int value = (node == nullptr) ? 0 : node->value;
+
+    pthread_mutex_unlock(&bucket_locks[bucket_idx]);
+    return value;
 }
 
 void FineHashTable::remove(int key) {
     // 구현
+    int bucket_idx = hash_func(key);
+    pthread_mutex_lock(&bucket_locks[bucket_idx]);
+
+    HTNode* prev = nullptr;
+    HTNode* node = buckets_[bucket_idx];
+
+    while (node != nullptr) {
+        if (node->key == key) {
+            if (prev == nullptr) {
+                buckets_[bucket_idx] = node->next;
+            }
+            else {
+                prev->next = node->next;
+            }
+            delete node;
+            break;
+        }
+        prev = node;
+        node = node->next;
+    }
+
+    pthread_mutex_unlock(&bucket_locks[bucket_idx]);
 }
 
 void FineHashTable::traversal(KVC* arr) {
     // 구현
+    for (int i = 0; i < num_buckets_; i++) {
+        pthread_mutex_lock(&bucket_locks[i]);
+    }
+
+    DefaultHashTable::traversal(arr);
+
+    for (int i = 0; i < num_buckets_; i++) {
+        pthread_mutex_unlock(&bucket_locks[i]);
+    }
 }
