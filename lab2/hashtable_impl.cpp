@@ -14,6 +14,7 @@
 
 namespace {
 HTNode* find_node(HTNode* head, int key) {
+    // Traverse one bucket chain and return the matching node if it exists.
     HTNode* node = head;
     while (node != nullptr) {
         if (node->key == key) {
@@ -91,11 +92,13 @@ void HashTable::insert(int key, int value) {
     HTNode* node = find_node(buckets_[bucket_idx], key);
 
     if (node != nullptr) {
+        // Re-insert on the same key accumulates value and update count.
         node->value += value;
         node->upd_cnt += 1;
         return;
     }
 
+    // Insert new nodes at the head of the bucket chain.
     HTNode* new_node = new HTNode{key, value, 0, buckets_[bucket_idx]};
     buckets_[bucket_idx] = new_node;
 }
@@ -118,6 +121,7 @@ void HashTable::remove(int key) {
 
     while (node != nullptr) {
         if (node->key == key) {
+            // Unlink the target node from the singly linked bucket chain.
             if (prev == nullptr) {
                 buckets_[bucket_idx] = node->next;
             }
@@ -150,6 +154,7 @@ CoarseHashTable::~CoarseHashTable() {
 
 void CoarseHashTable::insert(int key, int value) {
     // 구현
+    // Protect the whole table with one lock.
     pthread_mutex_lock(&mutex_lock);
 
     int bucket_idx = hash_func(key);
@@ -207,6 +212,7 @@ void CoarseHashTable::remove(int key) {
 
 void CoarseHashTable::traversal(KVC* arr) {
     // 구현
+    // Hold the global lock so traversal sees a consistent snapshot.
     pthread_mutex_lock(&mutex_lock);
     DefaultHashTable::traversal(arr);
     pthread_mutex_unlock(&mutex_lock);
@@ -233,6 +239,7 @@ FineHashTable::~FineHashTable() {
 void FineHashTable::insert(int key, int value) {
     // 구현
     int bucket_idx = hash_func(key);
+    // Only lock the bucket touched by this key.
     pthread_mutex_lock(&bucket_locks[bucket_idx]);
 
     HTNode* node = find_node(buckets_[bucket_idx], key);
@@ -289,6 +296,7 @@ void FineHashTable::remove(int key) {
 
 void FineHashTable::traversal(KVC* arr) {
     // 구현
+    // Lock every bucket in a fixed order before reading the whole table.
     for (int i = 0; i < num_buckets_; i++) {
         pthread_mutex_lock(&bucket_locks[i]);
     }
